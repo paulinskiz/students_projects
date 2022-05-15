@@ -9,16 +9,19 @@
 
     @else
     <table>
-        <tr>
-            <th>Project Number</th>
-            <th>Project Title</th>
-            <th width="280px">Action</th>
-        </tr>
-        @foreach ($projects as $project)
+        <thead>
+            <tr>
+                <th>Project Number</th>
+                <th>Project Title</th>
+                <th width="280px">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($projects as $project)
             <tr>
                 <td>{{ $project->id }}</td>
-                <td>{{ $project->title }}</td>
-                <td>
+                <td><a href="{{ route('projects.show', compact('project')) }}">{{ $project->title }}</a></td>
+                <td>                        
                     <form action="{{ route('projects.destroy',$project->id) }}" method="Post">
                         <a href="{{ route('projects.edit',$project->id) }}">Edit</a>
                         @csrf
@@ -27,9 +30,9 @@
                     </form>
                 </td>
             </tr>
-        @endforeach
+            @endforeach
+        </tbody>
     </table>
 
     @endif
-    
 @endsection
