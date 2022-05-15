@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Project;
+use App\Models\Group;
 
 class ProjectController extends Controller
 {
@@ -46,8 +47,16 @@ class ProjectController extends Controller
         $project->title = $request->title;
         $project->groups = $request->groups;
         $project->students_group = $request->students_group;
-
         $project->save();
+
+        for($i=1; $i<=$request->groups; $i++){
+            $group = new Group;
+            $group->project_id = $project->id;
+            $group->number = $i;
+            $group->save();
+        }
+
+
 
         return redirect()->route('projects.show', $project);
     }
@@ -60,7 +69,8 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        return view('projects.show', compact('project'));
+        $groups = Group::with(['students'])->where("project_id", $project->id)->get();
+        return view('projects.show', compact(['project', 'groups']));
     }
 
     /**
@@ -108,6 +118,8 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         $project->delete();
+
+        Group::where('project_id', $project->id)->delete();
 
         return redirect()->route('projects.index');
     }

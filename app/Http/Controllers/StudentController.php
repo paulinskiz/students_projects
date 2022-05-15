@@ -66,11 +66,13 @@ class StudentController extends Controller
     public function destroy(Request $request)
     {
         $student = Student::find($request->student_id);
+        $student->groups()->detach($request->group_id);
         $student->projects()->detach($request->project_id);
         $haveProject = $student->projects()->where('student_id', $student->id)->exists();
         if (!$haveProject){
             $student->delete();
         }
+
         return redirect()->back();
     }
 }

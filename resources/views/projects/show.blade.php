@@ -23,13 +23,26 @@
             @foreach ($project->students as $student)
             <tr>
                 <td>{{ $student->full_name }}</td>
-                <td>Group #</td>
+                @php
+                    $groups = $student->groups()->where('student_id', $student->id)->get();
+                    $group = $groups->where('project_id', $project->id)->first();
+                @endphp
+                <td>
+                    @if ($group)
+                        {{$group->number}}
+                    @else
+                    -
+                    @endif
+
+                </td>
                 <td>
                     <form action="{{ route('students.destroy', $student->id) }}" method="POST">
                         @csrf
                         @method('DELETE')
                         <input type="hidden" name="project_id" value="{{$project->id}}">
                         <input type="hidden" name="student_id" value="{{$student->id}}">
+                        <input type="hidden" name="group_id" 
+                        value="@if ($group){{$group->id}}@endif">
                         <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
                 </td>
@@ -54,13 +67,16 @@
                 @for ($j=1; $j<=$project->students_group; $j++)
                 <tr>
                     <td>
-                        <form action="">
+                        <form action="{{route('groups.assign')}}" onchange="submit();" method="POST">
+                            @csrf
                             <select name="full_name">
                                 <option value="">Assign student</option>
                                 @foreach ($project->students as $student)
-                                    <option value="full_name">{{$student->full_name}}</option>
+                                    <option value="{{$student->full_name}}">{{$student->full_name}}</option>
                                 @endforeach
                             </select>
+                            <input type="hidden" name="project_id" value="{{$project->id}}">
+                            <input type="hidden" name="number" value="{{$i}}">
                         </form>
                     </td>
                 </tr>
@@ -68,5 +84,15 @@
             </tbody>
         </table>
     @endfor
+    
+    {{-- @foreach ($groups->students as $student) --}}
+        
+        {{-- {{$group->project_id}}
+        {{$group->number}}
+        {{$group->student_id}} --}}
+        
+        <br>
+        
+    {{-- @endforeach --}}
 
 @endsection
