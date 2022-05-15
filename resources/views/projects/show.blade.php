@@ -57,6 +57,7 @@
     <h1>Groups</h1>
     
     @for ($i=1; $i<=$project->groups; $i++)
+
         <table>
             <thead>
                 <tr>
@@ -65,34 +66,40 @@
             </thead>
             <tbody>
                 @for ($j=1; $j<=$project->students_group; $j++)
-                <tr>
-                    <td>
-                        <form action="{{route('groups.assign')}}" onchange="submit();" method="POST">
-                            @csrf
-                            <select name="full_name">
-                                <option value="">Assign student</option>
-                                @foreach ($project->students as $student)
-                                    <option value="{{$student->full_name}}">{{$student->full_name}}</option>
-                                @endforeach
-                            </select>
-                            <input type="hidden" name="project_id" value="{{$project->id}}">
-                            <input type="hidden" name="number" value="{{$i}}">
-                        </form>
-                    </td>
-                </tr>
+                @php
+                    $groups = $project->groups()->get();
+                    $group = $groups->where('number', $i)->first();
+                    $students = $group->students()->get();
+                    $studentsArr = [];
+                    foreach ($students as $student){
+                        array_push($studentsArr, $student->full_name);
+                    }
+                @endphp
+                @if ($group->students()->count() >= $j)
+                    <tr>
+                        <td>{{$studentsArr[$j-1]}}</td>
+                    </tr>
+                @else
+                    <tr>
+                        <td>
+                            <form action="{{route('groups.assign')}}" onchange="submit();" method="POST">
+                                @csrf
+                                <select name="full_name">
+                                    <option value="">Assign student</option>
+                                    @foreach ($project->students as $student)
+                                        <option value="{{$student->full_name}}">{{$student->full_name}}</option>
+                                    @endforeach
+                                </select>
+                                <input type="hidden" name="project_id" value="{{$project->id}}">
+                                <input type="hidden" name="number" value="{{$i}}">
+                            </form>
+                        </td>
+                    </tr>  
+                @endif
+                
                 @endfor
             </tbody>
         </table>
     @endfor
-    
-    {{-- @foreach ($groups->students as $student) --}}
-        
-        {{-- {{$group->project_id}}
-        {{$group->number}}
-        {{$group->student_id}} --}}
-        
-        <br>
-        
-    {{-- @endforeach --}}
-
 @endsection
+
