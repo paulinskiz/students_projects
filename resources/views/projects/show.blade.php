@@ -55,7 +55,9 @@
 
     {{-- Groups tables --}}
     <h1>Groups</h1>
-    
+    @if ($message = Session::get('error'))
+        <p>{{$message}}</p>
+    @endif
     @for ($i=1; $i<=$project->groups; $i++)
 
         <table>

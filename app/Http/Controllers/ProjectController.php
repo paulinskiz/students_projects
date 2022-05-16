@@ -69,8 +69,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        $groups = Group::all();
-        return view('projects.show', compact(['project', 'groups']));
+        return view('projects.show', compact(['project']));
     }
 
     /**
