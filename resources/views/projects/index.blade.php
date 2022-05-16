@@ -11,7 +11,7 @@
     <table>
         <thead>
             <tr>
-                <th>Project Number</th>
+                <th>Project Start Date</th>
                 <th>Project Title</th>
                 <th width="280px">Action</th>
             </tr>
@@ -19,7 +19,7 @@
         <tbody>
             @foreach ($projects as $project)
             <tr>
-                <td>{{ $project->id }}</td>
+                <td>{{ $project->created_at }}</td>
                 <td><a href="{{ route('projects.show', compact('project')) }}">{{ $project->title }}</a></td>
                 <td>                        
                     <form action="{{ route('projects.destroy',$project->id) }}" method="Post">
