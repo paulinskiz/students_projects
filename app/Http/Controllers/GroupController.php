@@ -9,7 +9,7 @@ use App\Models\Student;
 class GroupController extends Controller
 {
     /**
-     * Store a newly created resource in storage.
+     * Assign student to a single group of project
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response

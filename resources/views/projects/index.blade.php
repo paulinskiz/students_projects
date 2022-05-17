@@ -4,6 +4,7 @@
 
     <a href="{{ route('projects.create') }}">Create new project</a>
 
+    {{-- Table for all projects --}}
     @if ($projects->isEmpty())
     <h3>There are no projects created</h3>
 

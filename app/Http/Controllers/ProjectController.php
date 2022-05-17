@@ -39,8 +39,8 @@ class ProjectController extends Controller
     {
         $request->validate([
             'title' => 'required',
-            'groups' => 'required|numeric',
-            'students_group' => 'required|numeric',
+            'groups' => 'required|integer',
+            'students_group' => 'required|integer',
         ]);
 
         $project = new Project;
@@ -109,17 +109,20 @@ class ProjectController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource and everything with that resource from storage.
      *
      * @param  \App\Project $project
      * @return \Illuminate\Http\Response
      */
     public function destroy(Project $project)
     {
+        $project->students()->detach();
         $project->delete();
-
-        Group::where('project_id', $project->id)->delete();
-
+        $groups = Group::where('project_id', $project->id)->get();
+        foreach ($groups as $group) {
+            $group->students()->detach();
+            $group->delete();
+        }
         return redirect()->route('projects.index');
     }
 }
