@@ -111,7 +111,9 @@
                                                 <select name="full_name" class="form-select" style="border: 1px solid black; margin: 2px 0px">
                                                     <option value="">Assign student</option>
                                                     @foreach ($project->students as $student)
-                                                        <option value="{{$student->full_name}}">{{$student->full_name}}</option>
+                                                        @if (!$student->groups()->exists())
+                                                            <option value="{{$student->full_name}}">{{$student->full_name}}</option>
+                                                        @endif
                                                     @endforeach
                                                 </select>
                                                 <input type="hidden" name="project_id" value="{{$project->id}}">
