@@ -1,27 +1,42 @@
 @extends('layouts.layout')
 @section('content')
-    <h1>Create new project</h1>
 
-    <form action="{{ route('projects.store') }}" method="POST">
-        @csrf
-        <label for="title">Project title</label>
-        <input type="text" name="title">
-        @error('title')
-            <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
-        @enderror
-        <label for="groups">Number of groups</label>
-        <input type="text" name="groups">
-        @error('groups')
-            <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
-        @enderror
-        <label for="students_group">Students per group</label>
-        <input type="text" name="students_group">
-        @error('students_group')
-            <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
-        @enderror
-        <input type="submit">
-    </form>
-    <br>
-    <a href=" {{route('projects.index')}} ">Back to list</a>
+    <div class="container mt-5">
+        <h1>Create new project</h1>
+        <div class="row">
+            <div class="col-4">
+                <form action="{{ route('projects.store') }}" method="POST">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Project title</label>
+                        <input type="text" name="title" class="form-control">
+                        @error('title')
+                            <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="groups" class="form-label">Number of groups</label>
+                        <input type="text" name="groups" class="form-control">
+                        @error('groups')
+                            <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="students_group" class="form-label">Students per group</label>
+                        <input type="text" name="students_group" class="form-control">
+                        @error('students_group')
+                            <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <input type="submit" value="Create" class="btn btn-primary">
+                </form>
+            </div>
+        </div>
+        <a href=" {{route('projects.index')}} " class="btn btn-secondary mt-2">Back to list</a>
+    </div>
+    
     
 @endsection
