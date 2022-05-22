@@ -40,6 +40,11 @@ Install all the dependencies using composer:
     <li>composer install</li>
 </ul>
 
+Copy the example env file and make the required configuration changes in the .env file
+<ul>
+    <li>cp .env.example .env</li>
+</ul>
+
 Run the database migrations (Make sure that have database named "students_projects"):
 <ul>
     <li>php artisan migrate</li>
