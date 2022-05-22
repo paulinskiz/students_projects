@@ -20,10 +20,9 @@ Route::get('/', [ProjectController::class, 'index']);
 
 Route::resource('projects', ProjectController::class);
 
-// Route::resource('students', StudentController::class);
-
 Route::get('students/add/{project_id}', [StudentController::class, 'add'])->name('students.add');
 Route::post('students', [StudentController::class, 'store'])->name('students.store');
 Route::delete('students/{student_id}', [StudentController::class, 'destroy'])->name('students.destroy');
 
 Route::post('groups', [GroupController::class, 'assign'])->name('groups.assign');
+Route::post('groups/unsign/', [GroupController::class, 'unsign'])->name('groups.unsign');

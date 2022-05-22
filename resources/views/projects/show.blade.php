@@ -32,8 +32,7 @@
                             <td>
                                 {{-- find the students group and show group number --}}
                                 @php
-                                    $groups = $student->groups()->where('student_id', $student->id)->get();
-                                    $group = $groups->where('project_id', $project->id)->first();
+                                    $group = $student->groups()->where('student_id', $student->id)->where('project_id', $project->id)->first();
                                 @endphp
                                 @if ($group)
                                     Group #{{$group->number}}
@@ -68,12 +67,7 @@
         <div class="col-5">
             <div class="row my-4">
                 <h1>Groups</h1>
-                {{-- show an error if student is already assigned --}}
-                @if ($message = Session::get('error'))
-                    <div class="alert alert-danger">
-                        {{$message}}
-                    </div>
-                @endif
+
                 {{-- table for each group --}}
                 
                 @for ($i=1; $i<=$project->groups; $i++)
@@ -92,7 +86,7 @@
                                     $students = $group->students()->get();
                                     $studentsArr = [];
                                     foreach ($students as $student){
-                                        array_push($studentsArr, $student->full_name);
+                                        array_push($studentsArr, $student);
                                     }
                                 @endphp
                                 {{-- max rows for max students per group --}}
@@ -101,17 +95,27 @@
                                 {{-- show students name if student is attached to a group --}}
                                 @if ($group->students()->count() > $j)
                                     <tr>
-                                        <td>{{$studentsArr[$j]}}</td>
+                                        <td>
+                                            
+                                            <form action="{{route('groups.unsign')}}" method="POST">
+                                                @csrf
+                                                {{$studentsArr[$j]->full_name}} 
+                                                <input type="hidden" name="student_id" value="{{$studentsArr[$j]->id}}">
+                                                <input type="hidden" name="group_id" value="{{$studentsArr[$j]->groups()->where('project_id', $project->id)->first()->group_id}}">
+                                                <input type="submit" value="X" class="btn btn-sm btn-outline-danger">
+                                            </form>
+                                        </td>
                                     </tr>
                                 @else
                                     <tr>
                                         <td class="p-0">
                                             <form action="{{route('groups.assign')}}" onchange="submit();" method="POST">
                                                 @csrf
+                                                {{-- Select only unsigned students --}}
                                                 <select name="full_name" class="form-select" style="border: 1px solid black; margin: 2px 0px">
                                                     <option value="">Assign student</option>
                                                     @foreach ($project->students as $student)
-                                                        @if (!$student->groups()->exists())
+                                                        @if (!$student->groups()->where('project_id', $project->id)->exists())
                                                             <option value="{{$student->full_name}}">{{$student->full_name}}</option>
                                                         @endif
                                                     @endforeach

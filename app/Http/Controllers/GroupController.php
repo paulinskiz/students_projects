@@ -36,4 +36,17 @@ class GroupController extends Controller
         $student->groups()->attach($group->id);
         return redirect()->back();
     }
+
+    /**
+     * Unsign student from group of project
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function unsign(Request $request)
+    {
+        $student = Student::find($request->student_id);
+        $student->groups()->detach($request->group_id);
+
+        return redirect()->back();
+    }
 }
