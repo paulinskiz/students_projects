@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use App\Models\Group;
+use App\Models\Student;
 
 class ProjectController extends Controller
 {
@@ -49,14 +50,13 @@ class ProjectController extends Controller
         $project->students_group = $request->students_group;
         $project->save();
 
+        // Create groups for projects:
         for($i=1; $i<=$request->groups; $i++){
             $group = new Group;
             $group->project_id = $project->id;
             $group->number = $i;
             $group->save();
         }
-
-
 
         return redirect()->route('projects.show', $project);
     }
@@ -97,13 +97,30 @@ class ProjectController extends Controller
             'groups' => 'required|numeric',
             'students_group' => 'required|numeric',
         ]);
-
+        // update project:
         $project = Project::find($id);
         $project->title = $request->title;
         $project->groups = $request->groups;
         $project->students_group = $request->students_group;
-
         $project->save();
+
+        // update groups:
+        $groups = Group::where('project_id', $project->id)->get();
+        $students = Student::get();
+        foreach ($groups as $group){
+            while ($group->students()->where('group_id', $group->id)->count() > $request->students_group){
+                $group->students()->detach($group->students()->where('group_id', $group->id)->orderBy('id', 'desc')->first()->id);
+            }
+        }
+        
+        // delete groups if there is too much after update:
+        if($groups->count() > $request->groups){
+            for($i=$groups->count(); $i>$request->groups; $i--) {
+                $groups[$i-1]->students()->detach();
+                $group = $groups[$i-1];
+                $group->delete();
+            }
+        }
 
         return redirect()->route('projects.index');
     }
@@ -116,13 +133,25 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        $project->students()->detach();
-        $project->delete();
+        // Detach students from project:
+        $students = $project->students()->get();
+        foreach ($students as $student) {
+            $student->projects()->detach($project->id);
+            $haveProject = $student->projects()->where('student_id', $student->id)->exists();
+            if (!$haveProject){
+                $student->delete();
+            }
+        }
+
+        // delete groups from project:
         $groups = Group::where('project_id', $project->id)->get();
         foreach ($groups as $group) {
             $group->students()->detach();
             $group->delete();
         }
+        
+        // delete project:
+        $project->delete();
         return redirect()->route('projects.index');
     }
 }
